@@ -20,10 +20,10 @@ module LoadFile
     # Examples
     #
     #   # unpack to PWD
-    #   FileLoad::Archive.new("/ninja/file.gz").unpack
+    #   LoadFile::Archive.new("/ninja/file.gz").unpack
     #
     #   # unpack to custom directory
-    #   FileLoad::Archive.new("file.zip", "/data").unpack
+    #   LoadFile::Archive.new("file.zip", "/data").unpack
     #
     def initialize(file, local_path = nil)
       if File.exist?(file)
@@ -43,7 +43,7 @@ module LoadFile
 
     # Public: unpack the archive
     #
-    # Returns LoadFile::Status::*
+    # Returns Status::*
     def unpack
       case File.extname(@file)
       when ".zip"
@@ -51,7 +51,7 @@ module LoadFile
       when /\.(gz)|(gzip)/
         gunzip
       else
-        status LoadFile::Status::Success
+        status Status::Success
       end
     end
 
@@ -84,9 +84,9 @@ module LoadFile
         if return_code.exitstatus == 0 && File.exists?(complete_file)
           File.delete complete_file
           File.delete(file) if @delete_archive
-          status LoadFile::Status::Success
+          status Status::Success
         else
-          status LoadFile::Status::Error
+          status Status::Error
         end
       end
 

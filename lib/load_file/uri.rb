@@ -10,12 +10,12 @@ module LoadFile
     #
     # Examples
     #
-    #   FileLoad::URI.new("http://ninja/file.gz").load
-    #   FileLoad::URI.new("http://ninja/file.zip", "/data").auth("user", "password").load
+    #   LoadFile::URI.new("http://ninja/file.gz").load
+    #   LoadFile::URI.new("http://ninja/file.zip", "/data").auth("user", "password").load
     #
     # Returns LoadFile::Result
     def initialize(remote_uri, local_path = nil)
-      @adapter = LoadFile::Adapter::DEFAULT.new(remote_uri, local_path)
+      @adapter = Adapter::DEFAULT.new(remote_uri, local_path)
     end
 
     # Public: en-/disable SSL verification

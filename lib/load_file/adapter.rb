@@ -1,5 +1,5 @@
-require 'LoadFile/adapter/base'
-require "LoadFile/adapter/nethttp"
+require 'load_file/adapter/base'
+require "load_file/adapter/nethttp"
 
 module LoadFile
   module Adapter

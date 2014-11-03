@@ -1,8 +1,8 @@
-require 'LoadFile/version'
-require 'LoadFile/uri'
-require 'LoadFile/archive'
-require 'LoadFile/adapter'
-require 'LoadFile/status'
+require 'load_file/version'
+require 'load_file/uri'
+require 'load_file/archive'
+require 'load_file/adapter'
+require 'load_file/status'
 
 # Public: loads resources from URI and unpacks zip/gzip archives
 module LoadFile
