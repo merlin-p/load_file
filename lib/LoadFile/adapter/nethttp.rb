@@ -38,58 +38,58 @@ module LoadFile
       end
 
       private
-      def http_request
-        uri = URI(@remote_uri)
-        file = temp_filename
-        Net::HTTP.start(uri.host, uri.port,
-          :use_ssl => uri.scheme == 'https',
-          :verify_mode => 
-            @verify_ssl ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
-        ) do |http|
-          code = http.head(uri.request_uri).code.to_i
-          size = File.exists?(file) ? File.size(file) : 0
-          if code >=200 && code < 300 && size > 0
-            headers = { 'Range' => "bytes=#{size}-" }
-          end
-          request = Net::HTTP::Get.new uri.request_uri, headers ? headers : {}
-          request.basic_auth @username, @password if !@username.nil?
-          http.request(request) do |response|
-            yield response, file, size_from_header(response)
-          end
-        end
-      end
-
-      def write_stream(file, response)
-        File.open(file,'a+') do |f|
-          response.read_body do |chunk|
-            f.write chunk
+        def http_request
+          uri = URI(@remote_uri)
+          file = temp_filename
+          Net::HTTP.start(uri.host, uri.port,
+            :use_ssl => uri.scheme == 'https',
+            :verify_mode => 
+              @verify_ssl ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
+          ) do |http|
+            code = http.head(uri.request_uri).code.to_i
+            size = File.exists?(file) ? File.size(file) : 0
+            if code >=200 && code < 300 && size > 0
+              headers = { 'Range' => "bytes=#{size}-" }
+            end
+            request = Net::HTTP::Get.new uri.request_uri, headers ? headers : {}
+            request.basic_auth @username, @password if !@username.nil?
+            http.request(request) do |response|
+              yield response, file, size_from_header(response)
+            end
           end
         end
-      end
 
-      def temp_filename
-        default_name = ".loadfile-tmp-"+Digest::MD5.hexdigest(@remote_uri)
-        if File.directory? @save_location
-          File.join @save_location, default_name
-        else
-          @target_file = @save_location
-        end
-      end
-
-      def file_from_header(header)
-        if header.key?('content-disposition')
-          matches = header['content-disposition'].match(/filename=(\"?)(.+)\1/)
-          if matches.size == 3
-            File.join @save_location, matches[2]
+        def write_stream(file, response)
+          File.open(file,'a+') do |f|
+            response.read_body do |chunk|
+              f.write chunk
+            end
           end
-        elsif File.directory?(@save_location)
-          File.join @save_location, File.basename(URI(@remote_uri).path)
         end
-      end
 
-      def size_from_header(header)
-        header.key?('content-length') ? header['content-length'].to_i : -1
-      end
+        def temp_filename
+          default_name = ".loadfile-tmp-"+Digest::MD5.hexdigest(@remote_uri)
+          if File.directory? @save_location
+            File.join @save_location, default_name
+          else
+            @target_file = @save_location
+          end
+        end
+
+        def file_from_header(header)
+          if header.key?('content-disposition')
+            matches = header['content-disposition'].match(/filename=(\"?)(.+)\1/)
+            if matches.size == 3
+              File.join @save_location, matches[2]
+            end
+          elsif File.directory?(@save_location)
+            File.join @save_location, File.basename(URI(@remote_uri).path)
+          end
+        end
+
+        def size_from_header(header)
+          header.key?('content-length') ? header['content-length'].to_i : -1
+        end
     end
   end
 end

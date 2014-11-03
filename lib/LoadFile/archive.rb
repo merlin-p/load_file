@@ -56,48 +56,48 @@ module LoadFile
     end
 
     private
-    def complete_file
-      checksum_file = ".complete-" + Digest::MD5.hexdigest(@file)
-      File.join @save_location, checksum_file
-    end
-
-    def cleanup
-      File.delete(complete_file) if File.exists?(complete_file)
-    end
-
-    def unzip
-      cleanup
-      # -q quiet, -o always overwrite
-      `cd "#{@save_location}" && unzip -q -o "#{@file}" && touch #{complete_file}`
-      check_command $?
-    end
-
-    def gunzip
-      cleanup
-      target = File.join(@save_location, File.basename(@file, File.extname(@file)))
-      # -c to stdout, -q quiet, -f force overwrite, -k keep original
-      `gunzip -c -q -f -k "#{@file}" > "#{target}" && touch #{complete_file}`
-      check_command $?
-    end
-
-    def check_command(return_code)
-      if return_code.exitstatus == 0 && File.exists?(complete_file)
-        File.delete complete_file
-        File.delete(file) if @delete_archive
-        status LoadFile::Status::Success
-      else
-        status LoadFile::Status::Error
+      def complete_file
+        checksum_file = ".complete-" + Digest::MD5.hexdigest(@file)
+        File.join @save_location, checksum_file
       end
-    end
 
-    def status(state, error = nil, trace = nil)
-      state.new ({
-        :input => {
-          :file => @file
-        },
-        :error   => error,
-        :trace   => trace
-      })
-    end
+      def cleanup
+        File.delete(complete_file) if File.exists?(complete_file)
+      end
+
+      def unzip
+        cleanup
+        # -q quiet, -o always overwrite
+        `cd "#{@save_location}" && unzip -q -o "#{@file}" && touch #{complete_file}`
+        check_command $?
+      end
+
+      def gunzip
+        cleanup
+        target = File.join(@save_location, File.basename(@file, File.extname(@file)))
+        # -c to stdout, -q quiet, -f force overwrite, -k keep original
+        `gunzip -c -q -f -k "#{@file}" > "#{target}" && touch #{complete_file}`
+        check_command $?
+      end
+
+      def check_command(return_code)
+        if return_code.exitstatus == 0 && File.exists?(complete_file)
+          File.delete complete_file
+          File.delete(file) if @delete_archive
+          status LoadFile::Status::Success
+        else
+          status LoadFile::Status::Error
+        end
+      end
+
+      def status(state, error = nil, trace = nil)
+        state.new ({
+          :input => {
+            :file => @file
+          },
+          :error   => error,
+          :trace   => trace
+        })
+      end
   end
 end
