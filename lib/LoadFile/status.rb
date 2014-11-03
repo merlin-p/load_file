@@ -16,15 +16,15 @@ module LoadFile
       end
     end
 
-    class Success < LoadFile::Status::Base
+    class Success < Base
       CODE = 0
     end
 
-    class Error < LoadFile::Status::Base
+    class Error < Base
       CODE = 1
     end
 
-    class FileRetrieved < LoadFile::Status::Base
+    class FileRetrieved < Base
       CODE = 2
     end
   end
