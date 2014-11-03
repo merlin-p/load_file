@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+#encoding: UTF-8
+
+# simple CLI loader, downloads and unpacks all URIs given via arguments
+
+require 'load_file'
+len = ARGV.size
+if len == 0
+  puts "Usage: #{File.basename($0)} [FILE]...
+download and extract FILEs to current directory
+  "
+else
+  ARGV.each_with_index do |a, i|
+    puts "[#{i+1}/#{len}] loading URI <#{a}>"
+    LoadFile.load_archive(a)
+  end
+end
