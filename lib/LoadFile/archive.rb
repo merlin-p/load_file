@@ -7,7 +7,7 @@ module LoadFile
     attr_reader :file
 
     # Public: where to extract the archive
-    attr_reader :save_location
+    attr_reader :local_path
 
     # Public: if enabled archive will be removed once extracted
     attr_accessor :delete_archive
@@ -15,7 +15,7 @@ module LoadFile
     # Public: setup an archive for processing
     #
     # file - the archive filename (can be a relative path)
-    # save_location - where to extract the archive, PWD used by default (default: nil)
+    # local_path - where to extract the archive, PWD used by default (default: nil)
     #
     # Examples
     #
@@ -25,19 +25,19 @@ module LoadFile
     #   # unpack to custom directory
     #   FileLoad::Archive.new("file.zip", "/data").unpack
     #
-    def initialize(file, save_location = nil)
+    def initialize(file, local_path = nil)
       if File.exist?(file)
         @file = File.expand_path file
       else
         raise IOError, "Archive file not found, cannot continue [#{file}]"
       end
 
-      if save_location.nil?
-        @save_location = Dir.pwd
-      elsif File.directory? save_location
-        @save_location = File.expand_path save_location
+      if local_path.nil?
+        @local_path = Dir.pwd
+      elsif File.directory? local_path
+        @local_path = File.expand_path local_path
       else
-        @save_location = Pathname.new(File.expand_path(save_location)).dirname
+        @local_path = Pathname.new(File.expand_path(local_path)).dirname
       end
     end
 
@@ -58,7 +58,7 @@ module LoadFile
     private
       def complete_file
         checksum_file = ".complete-" + Digest::MD5.hexdigest(@file)
-        File.join @save_location, checksum_file
+        File.join @local_path, checksum_file
       end
 
       def cleanup
@@ -68,13 +68,13 @@ module LoadFile
       def unzip
         cleanup
         # -q quiet, -o always overwrite
-        `cd "#{@save_location}" && unzip -q -o "#{@file}" && touch #{complete_file}`
+        `cd "#{@local_path}" && unzip -q -o "#{@file}" && touch #{complete_file}`
         check_command $?
       end
 
       def gunzip
         cleanup
-        target = File.join(@save_location, File.basename(@file, File.extname(@file)))
+        target = File.join(@local_path, File.basename(@file, File.extname(@file)))
         # -c to stdout, -q quiet, -f force overwrite, -k keep original
         `gunzip -c -q -f -k "#{@file}" > "#{target}" && touch #{complete_file}`
         check_command $?

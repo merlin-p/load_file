@@ -5,10 +5,10 @@ module LoadFile
     @queue = :loadfile
 
     # Public: perform the download and unpack the archive
-    def self.perform(remote_uri, save_location = nil, user = nil, password = nil)
-      result = LoadFile.from_uri(remote_uri, save_location, user, password)
+    def self.perform(remote_uri, local_path = nil, user = nil, password = nil)
+      result = LoadFile.from_uri(remote_uri, local_path, user, password)
       if result.success?
-        from_archive(result.params[:file], save_location)
+        from_archive(result.params[:file], local_path)
       else
         result
       end
@@ -16,7 +16,7 @@ module LoadFile
   end
 
   # Public: adds a job to reqeue queue
-  def self.add_job(remote_uri, save_location = nil, user = nil, password = nil)
-    Resque.enqueue(LoadFile::Job, remote_uri, save_location, user, password)
+  def self.add_job(remote_uri, local_path = nil, user = nil, password = nil)
+    Resque.enqueue(LoadFile::Job, remote_uri, local_path, user, password)
   end
 end

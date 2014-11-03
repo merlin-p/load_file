@@ -4,18 +4,18 @@ require 'digest/md5'
 module LoadFile
   module Adapter
     class NetHTTP < LoadFile::Adapter::Base
-      attr_reader :remote_uri, :save_location, :result, :target_file
+      attr_reader :remote_uri, :local_path, :result, :target_file
 
-      def initialize(remote_uri, save_location)
-        @remote_uri, @save_location = remote_uri, save_location
-        @save_location = Dir.pwd if @save_location.nil?
+      def initialize(remote_uri, local_path)
+        @remote_uri, @local_path = remote_uri, local_path
+        @local_path = Dir.pwd if @local_path.nil?
       end
 
       # Public: execute the request
       def load
         begin
           http_request do |response, file, size|
-            @target_file ||= file_from_header(response) || @save_location
+            @target_file ||= file_from_header(response) || @local_path
             if File.exists? @target_file
               if File.size(@target_file) == size
                 status LoadFile::Status::FileRetrieved
@@ -69,10 +69,10 @@ module LoadFile
 
         def temp_filename
           default_name = ".loadfile-tmp-"+Digest::MD5.hexdigest(@remote_uri)
-          if File.directory? @save_location
-            File.join @save_location, default_name
+          if File.directory? @local_path
+            File.join @local_path, default_name
           else
-            @target_file = @save_location
+            @target_file = @local_path
           end
         end
 
@@ -80,10 +80,10 @@ module LoadFile
           if header.key?('content-disposition')
             matches = header['content-disposition'].match(/filename=(\"?)(.+)\1/)
             if matches.size == 3
-              File.join @save_location, matches[2]
+              File.join @local_path, matches[2]
             end
-          elsif File.directory?(@save_location)
-            File.join @save_location, File.basename(URI(@remote_uri).path)
+          elsif File.directory?(@local_path)
+            File.join @local_path, File.basename(URI(@remote_uri).path)
           end
         end
 

@@ -6,7 +6,7 @@ module LoadFile
     # Public: setup new default Adapter
     # 
     # remote_uri - the remote URI to download
-    # save_location - where to save the files. PWD is used if omitted (default: nil)
+    # local_path - where to save the files. PWD is used if omitted (default: nil)
     #
     # Examples
     #
@@ -14,8 +14,8 @@ module LoadFile
     #   FileLoad::URI.new("http://ninja/file.zip", "/data").auth("user", "password").load
     #
     # Returns LoadFile::Result
-    def initialize(remote_uri, save_location = nil)
-      @adapter = LoadFile::Adapter::DEFAULT.new(remote_uri, save_location)
+    def initialize(remote_uri, local_path = nil)
+      @adapter = LoadFile::Adapter::DEFAULT.new(remote_uri, local_path)
     end
 
     # Public: en-/disable SSL verification

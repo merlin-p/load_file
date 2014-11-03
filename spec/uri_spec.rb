@@ -1,3 +1,5 @@
+require 'webmock/rspec'
+
 describe LoadFile::URI do
   before(:all) do
     file = 'testdata/test.zip'
@@ -19,16 +21,16 @@ describe LoadFile::URI do
   end
 
   describe '.initialize' do
-    context 'no save_location given' do
-      it 'should use Dir.pwd as save_location' do
-        expect(LoadFile::URI.new("http://t").adapter.save_location).to eq(Dir.pwd)
+    context 'no local_path given' do
+      it 'should use Dir.pwd as local_path' do
+        expect(LoadFile::URI.new("http://t").adapter.local_path).to eq(Dir.pwd)
       end
     end
 
-    context 'save_location is given' do
-      it 'should have save_location set' do
+    context 'local_path is given' do
+      it 'should have local_path set' do
         location = '/tmp'
-        expect(LoadFile::URI.new("http://t",location).adapter.save_location).to eq(location)
+        expect(LoadFile::URI.new("http://t",location).adapter.local_path).to eq(location)
       end
 
       it 'should save to the given directory' do

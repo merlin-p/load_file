@@ -8,16 +8,16 @@ describe LoadFile::Archive do
       end
     end
 
-    context 'save_location omitted' do
+    context 'local_path omitted' do
       it 'should use Dir.pwd' do
-        expect(LoadFile::Archive.new('testdata/test.zip').save_location).to eq(Dir.pwd)
+        expect(LoadFile::Archive.new('testdata/test.zip').local_path).to eq(Dir.pwd)
       end
     end
 
-    context 'save_location is given' do
-      it 'should have save_location set' do
+    context 'local_path is given' do
+      it 'should have local_path set' do
         location = '/tmp'
-        expect(LoadFile::Archive.new('testdata/test.zip',location).save_location).to eq(location)
+        expect(LoadFile::Archive.new('testdata/test.zip',location).local_path).to eq(location)
       end
     end
   end

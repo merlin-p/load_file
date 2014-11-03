@@ -13,7 +13,7 @@ module LoadFile
           @result = state.new({
             :input => {
               :remote_uri     => @remote_uri,
-              :save_location  => @save_location,
+              :local_path  => @local_path,
               :username       => @username,
               :password       => @password
             },
