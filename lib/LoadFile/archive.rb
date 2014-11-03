@@ -68,7 +68,7 @@ module LoadFile
       def unzip
         cleanup
         # -q quiet, -o always overwrite
-        `cd "#{@local_path}" && unzip -q -o "#{@file}" && touch #{complete_file}`
+        `unzip -q -o "#{@file}" -d "#{@local_path}" && touch #{complete_file}`
         check_command $?
       end
 
