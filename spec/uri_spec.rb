@@ -2,7 +2,7 @@ require 'webmock/rspec'
 
 describe LoadFile::URI do
   before(:all) do
-    file = 'testdata/test.zip'
+    file = 'spec/fixtures/test.zip'
     @file_stub = File.exists?(file) ? IO.read(file) : "\x0"
   end
 
