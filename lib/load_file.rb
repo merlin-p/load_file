@@ -3,7 +3,7 @@ require 'LoadFile/uri'
 require 'LoadFile/archive'
 require 'LoadFile/adapter'
 require 'LoadFile/status'
-require 'LoadFile/job'
+
 # Public: loads resources from URI and unpacks zip/gzip archives
 module LoadFile
   # Public: helper to download directly
