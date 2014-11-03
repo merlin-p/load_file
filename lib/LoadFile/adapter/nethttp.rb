@@ -17,19 +17,10 @@ module LoadFile
           http_request do |response, file, size|
             @target_file ||= file_from_header(response) || @local_path
             if File.exists? @target_file
-              if File.size(@target_file) == size
-                status LoadFile::Status::FileRetrieved
-              elsif size == -1
-                status LoadFile::Status::Success
-              end
+              check_target_file size
             else
               write_stream(file, response)
-              if File.readable?(file) && File.size(file)>0
-                File.rename file, @target_file
-                status LoadFile::Status::Success
-              else
-                status LoadFile::Status::Error, 'retrieved file not readable or empty'
-              end
+              check_written_file file
             end
           end
         rescue => e
@@ -38,6 +29,23 @@ module LoadFile
       end
 
       private
+        def check_target_file(size)
+          if File.size(@target_file) == size
+            status LoadFile::Status::FileRetrieved
+          elsif size == -1
+            status LoadFile::Status::Success
+          end
+        end
+
+        def check_written_file(file)
+          if File.readable?(file) && File.size(file)>0
+            File.rename file, @target_file
+            status LoadFile::Status::Success
+          else
+            status LoadFile::Status::Error, 'retrieved file not readable or empty'
+          end
+        end
+
         def http_request
           uri = URI(@remote_uri)
           file = temp_filename
